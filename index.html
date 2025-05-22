@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Park Zabeel</title>
+    <title>Park Zabeel 2</title>
     <link rel="apple-touch-icon" href="https://i.imghippo.com/files/tEG3031vlA.png">
     <link rel="apple-touch-startup-image" href="https://example.com/splash.png">
     <style>
@@ -33,9 +33,10 @@
             background-size: cover;
             background-attachment: fixed;
             z-index: 0;
+            transition: background 5s ease;
         }
         body {
-            font-family: 'Emirates Bold', Helvetica, Arial, sans-serif;
+            font-family: 'Emirates Bold';
             margin: 0;
             padding: 0;
             height: 100vh;
@@ -111,21 +112,25 @@
             transform: scaleX(-1);
             transition: left 0.5s linear;
         }
+        .dune {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25vh;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        .dune-gradient {
+            fill: url(#duneGradient);
+        }
         #celestialBody {
             font-size: 60px;
             position: absolute;
             transition: none;
             z-index: 1;
             opacity: 1;
-            pointer-events: none;
-        }
-        .dunes {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 25vh;
-            z-index: 1;
             pointer-events: none;
         }
         .button-container {
@@ -179,7 +184,7 @@
             gap: 10px;
         }
         .input-container span {
-            font-family: 'Emirates Bold', sans-serif;
+            font-family: 'Emirates Bold';
             font-size: 1.2em;
             color: #2c3e50;
         }
@@ -216,7 +221,7 @@
         #eGateButton {
             padding: 0 20px;
             font-size: 1.2em;
-            font-family: 'Emirates Bold', sans-serif;
+            font-family: 'Emirates Bold';
             background: white;
             color: #2c3e50;
             border: none;
@@ -232,7 +237,6 @@
         #eGateButton:hover {
             transform: scale(1.05);
         }
-        /* Popup Styles */
         #firstVisitPopup {
             display: none;
             position: fixed;
@@ -274,9 +278,9 @@
             text-align: center;
         }
         #firstVisitPopup .icon {
-            height: 1em; /* Ajusta la altura al tamaño de la línea de texto */
-            margin-right: 8px; /* Espaciado ajustado */
-            vertical-align: middle; /* Alineación vertical con el texto */
+            height: 1em;
+            margin-right: 8px;
+            vertical-align: middle;
         }
         #closePopup {
             padding: 5px 15px;
@@ -291,7 +295,6 @@
         #closePopup:hover {
             background-color: #34495e;
         }
-        /* Black background when popup is active */
         .black-background::before {
             content: '';
             position: fixed;
@@ -310,7 +313,7 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/archive/d/d0/20250508163912%21Emirates_logo.svg" 
          alt="Emirates Logo" class="emirates-logo">
     <div class="container">
-        <h1 id="routeTitle">Park Zabeel 1 to HQ in</h1>
+        <h1 id="routeTitle">Park Zabeel 2 to HQ in</h1>
         <div id="countdown">00:00</div>
         <div id="nextBus">Next bus at: --:--</div>
         <div class="progress-container">
@@ -331,12 +334,8 @@
         <div id="closestTimes"></div>
     </div>
     <div id="celestialBody">☀️</div>
-    <svg class="dunes" viewBox="0 0 1000 250" preserveAspectRatio="none">
-        <path id="dunePath" fill="rgba(237, 201, 175, 0.4)" />
-    </svg>
     <div class="stars-container" id="starsContainer"></div>
 
-    <!-- Popup for first visit -->
     <div id="firstVisitPopup">
         <h2>Add to Home Screen</h2>
         <p>To install this app on your iPhone:</p>
@@ -357,83 +356,55 @@
     </div>
 
     <script>
-        let dunePoints = [];
         let isGrosvenorToHQ = true;
         let starsCreated = false;
 
         const grosvenorToHQSchedule = [
-            { gros: "00:14", hq: "00:37" }, { gros: "00:39", hq: "01:09" }, { gros: "01:04", hq: "01:26" },
-            { gros: "01:29", hq: "01:51" }, { gros: "01:59", hq: "02:21" }, { gros: "02:29", hq: "02:51" },
-            { gros: "02:59", hq: "03:21" }, { gros: "03:29", hq: "03:51" }, { gros: "03:59", hq: "04:21" },
-            { gros: "04:29", hq: "04:51" }, { gros: "04:54", hq: "05:16" }, { gros: "05:19", hq: "05:41" },
-            { gros: "05:44", hq: "06:06" }, { gros: "06:09", hq: "06:31" }, { gros: "06:34", hq: "06:56" },
-            { gros: "06:59", hq: "07:21" }, { gros: "07:24", hq: "07:46" }, { gros: "07:49", hq: "08:11" },
-            { gros: "08:16", hq: "08:38" }, { gros: "08:41", hq: "09:03" }, { gros: "09:06", hq: "09:28" },
-            { gros: "09:31", hq: "09:53" }, { gros: "10:01", hq: "10:23" }, { gros: "10:31", hq: "10:53" },
-            { gros: "11:01", hq: "11:23" }, { gros: "11:26", hq: "11:48" }, { gros: "11:51", hq: "12:13" },
-            { gros: "12:16", hq: "12:38" }, { gros: "12:41", hq: "13:03" }, { gros: "13:06", hq: "13:28" },
-            { gros: "13:31", hq: "13:53" }, { gros: "13:56", hq: "14:18" }, { gros: "14:21", hq: "14:43" },
-            { gros: "14:46", hq: "15:08" }, { gros: "15:11", hq: "15:33" }, { gros: "15:36", hq: "16:05" },
-            { gros: "16:01", hq: "16:30" }, { gros: "16:26", hq: "16:55" }, { gros: "16:51", hq: "17:22" },
-            { gros: "17:21", hq: "17:50" }, { gros: "17:51", hq: "18:20" }, { gros: "18:28", hq: "18:59" },
-            { gros: "18:58", hq: "19:29" }, { gros: "19:25", hq: "19:56" }, { gros: "19:50", hq: "20:21" },
-            { gros: "20:13", hq: "20:44" }, { gros: "20:38", hq: "21:09" }, { gros: "21:08", hq: "21:39" },
-            { gros: "21:33", hq: "22:04" }, { gros: "21:58", hq: "22:29" }, { gros: "22:23", hq: "22:52" },
-            { gros: "22:46", hq: "23:08" }, { gros: "23:11", hq: "23:33" }, { gros: "23:35", hq: "23:57" },
-            { gros: "00:00", hq: "00:22" }
+            { gros: "00:15", hq: "00:37" }, { gros: "00:40", hq: "01:09" }, { gros: "01:05", hq: "01:26" },
+            { gros: "01:30", hq: "01:51" }, { gros: "02:00", hq: "02:21" }, { gros: "02:30", hq: "02:51" },
+            { gros: "03:00", hq: "03:21" }, { gros: "03:30", hq: "03:51" }, { gros: "04:00", hq: "04:21" },
+            { gros: "04:30", hq: "04:51" }, { gros: "04:55", hq: "05:16" }, { gros: "05:20", hq: "05:41" },
+            { gros: "05:45", hq: "06:06" }, { gros: "06:10", hq: "06:31" }, { gros: "06:35", hq: "06:56" },
+            { gros: "07:00", hq: "07:21" }, { gros: "07:25", hq: "07:46" }, { gros: "07:50", hq: "08:11" },
+            { gros: "08:17", hq: "08:38" }, { gros: "08:42", hq: "09:03" }, { gros: "09:07", hq: "09:28" },
+            { gros: "09:32", hq: "09:53" }, { gros: "10:02", hq: "10:23" }, { gros: "10:32", hq: "10:53" },
+            { gros: "11:02", hq: "11:23" }, { gros: "11:27", hq: "11:48" }, { gros: "11:52", hq: "12:13" },
+            { gros: "12:17", hq: "12:38" }, { gros: "12:42", hq: "13:03" }, { gros: "13:07", hq: "13:28" },
+            { gros: "13:32", hq: "13:53" }, { gros: "13:57", hq: "14:18" }, { gros: "14:22", hq: "14:43" },
+            { gros: "14:47", hq: "15:08" }, { gros: "15:12", hq: "15:33" }, { gros: "15:37", hq: "16:05" },
+            { gros: "16:02", hq: "16:30" }, { gros: "16:27", hq: "16:55" }, { gros: "16:52", hq: "17:22" },
+            { gros: "17:22", hq: "17:50" }, { gros: "17:52", hq: "18:20" }, { gros: "18:29", hq: "18:59" },
+            { gros: "18:59", hq: "19:29" }, { gros: "19:26", hq: "19:56" }, { gros: "19:51", hq: "20:21" },
+            { gros: "20:14", hq: "20:44" }, { gros: "20:39", hq: "21:09" }, { gros: "21:09", hq: "21:39" },
+            { gros: "21:34", hq: "22:04" }, { gros: "21:59", hq: "22:29" }, { gros: "22:24", hq: "22:52" },
+            { gros: "22:47", hq: "23:08" }, { gros: "23:12", hq: "23:33" }, { gros: "23:36", hq: "23:57" },
+            { gros: "00:01", hq: "00:22" }
         ];
+
 
         const hqToGrosvenorSchedule = [
-            "00:00", "00:25", "00:50", "01:15", "01:45", "02:15", "02:45", "03:15", "03:45", "04:15",
-            "04:40", "05:05", "05:30", "05:55", "06:20", "06:45", "07:10", "07:35", "08:00", "08:25",
-            "08:50", "09:15", "09:45", "10:15", "10:45", "11:10", "11:35", "12:00", "12:25", "12:50",
-            "13:15", "13:40", "14:05", "14:30", "14:55", "15:20", "15:45", "16:10", "16:35", "17:05",
-            "17:35", "18:10", "18:40", "19:05", "19:30", "19:55", "20:20", "20:50", "21:15", "21:40",
-            "22:05", "22:30", "22:55", "23:20", "23:45"
+            { hq: "00:00", gros: "00:15" }, { hq: "00:25", gros: "00:40" }, { hq: "00:50", gros: "01:05" },
+            { hq: "01:15", gros: "01:30" }, { hq: "01:45", gros: "02:00" }, { hq: "02:15", gros: "02:30" },
+            { hq: "02:45", gros: "03:00" }, { hq: "03:15", gros: "03:30" }, { hq: "03:45", gros: "04:00" },
+            { hq: "04:15", gros: "04:30" }, { hq: "04:40", gros: "04:55" }, { hq: "05:05", gros: "05:20" },
+            { hq: "05:30", gros: "05:45" }, { hq: "05:55", gros: "06:10" }, { hq: "06:20", gros: "06:35" },
+            { hq: "06:45", gros: "07:00" }, { hq: "07:10", gros: "07:25" }, { hq: "07:35", gros: "07:50" },
+            { hq: "08:00", gros: "08:17" }, { hq: "08:25", gros: "08:42" }, { hq: "08:50", gros: "09:07" },
+            { hq: "09:15", gros: "09:32" }, { hq: "09:45", gros: "10:02" }, { hq: "10:15", gros: "10:32" },
+            { hq: "10:45", gros: "11:02" }, { hq: "11:10", gros: "11:27" }, { hq: "11:35", gros: "11:52" },
+            { hq: "12:00", gros: "12:17" }, { hq: "12:25", gros: "12:42" }, { hq: "12:50", gros: "13:07" },
+            { hq: "13:15", gros: "13:32" }, { hq: "13:40", gros: "13:57" }, { hq: "14:05", gros: "14:22" },
+            { hq: "14:30", gros: "14:47" }, { hq: "14:55", gros: "15:12" }, { hq: "15:20", gros: "15:37" },
+            { hq: "15:45", gros: "16:02" }, { hq: "16:10", gros: "16:27" }, { hq: "16:35", gros: "16:52" },
+            { hq: "17:05", gros: "17:22" }, { hq: "17:35", gros: "17:52" }, { hq: "18:10", gros: "18:29" },
+            { hq: "18:40", gros: "18:59" }, { hq: "19:05", gros: "19:26" }, { hq: "19:30", gros: "19:51" },
+            { hq: "19:55", gros: "20:14" }, { hq: "20:20", gros: "20:39" }, { hq: "20:50", gros: "21:09" },
+            { hq: "21:15", gros: "21:34" }, { hq: "21:40", gros: "21:59" }, { hq: "22:05", gros: "22:24" },
+            { hq: "22:30", gros: "22:47" }, { hq: "22:55", gros: "23:12" }, { hq: "23:20", gros: "23:36" },
+            { hq: "23:45", gros: "00:01" }
         ];
 
-        function generateRandomDune() {
-            const segments = 4;
-            const width = 1000;
-            const segmentWidth = width / segments;
-            let path = "M0,250";
-            dunePoints = [{ x: 0, y: 250 }];
 
-            for (let i = 1; i <= segments; i++) {
-                const x1 = (i - 0.66) * segmentWidth;
-                const y1 = 250 - Math.random() * 130;
-                const x2 = (i - 0.33) * segmentWidth;
-                const y2 = 250 - Math.random() * 130;
-                const x3 = i * segmentWidth;
-                const y3 = i === segments ? 250 : 250 - Math.random() * 130;
-
-                path += ` C${x1},${y1} ${x2},${y2} ${x3},${y3}`;
-                dunePoints.push({ x: x1, y: y1 }, { x: x2, y: y2 }, { x: x3, y: y3 });
-            }
-
-            path += " L0,250 Z";
-            document.getElementById("dunePath").setAttribute("d", path);
-        }
-
-        function getBezierY(t, p0, p1, p2, p3) {
-            const mt = 1 - t;
-            return Math.pow(mt, 3) * p0.y + 3 * Math.pow(mt, 2) * t * p1.y + 
-                   3 * mt * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y;
-        }
-
-        function getDuneHeight(x) {
-            for (let i = 0; i < dunePoints.length - 3; i += 3) {
-                const p0 = dunePoints[i];
-                const p1 = dunePoints[i + 1];
-                const p2 = dunePoints[i + 2];
-                const p3 = dunePoints[i + 3];
-                if (x >= p0.x && x <= p3.x) {
-                    const t = (x - p0.x) / (p3.x - p0.x);
-                    return getBezierY(t, p0, p1, p2, p3);
-                }
-            }
-            return 250;
-        }
 
         function getBusTimes() {
             const currentSchedule = isGrosvenorToHQ ? grosvenorToHQSchedule.map(item => item.gros) : hqToGrosvenorSchedule;
@@ -469,53 +440,94 @@
         }
 
         function updateSkyAndCelestial() {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            const totalMinutes = hours * 60 + minutes;
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const totalMinutes = hours * 60 + minutes;
 
-            const celestial = document.getElementById('celestialBody');
-            const starsContainer = document.getElementById('starsContainer');
-            let gradient;
+    const celestial = document.getElementById('celestialBody');
+    const starsContainer = document.getElementById('starsContainer');
+    let gradient;
 
-            const dayLength = 12 * 60;
-            const sunrise = 6 * 60;
-            const sunset = 18 * 60;
-            const moonrise = sunset;
-            const moonset = sunrise + 1440;
+    // Define time periods (in minutes since midnight)
+    const sunriseStart = 5 * 60; // 5:00 AM
+    const sunriseEnd = 7 * 60; // 7:00 AM
+    const dayEnd = 17 * 60; // 5:00 PM
+    const sunsetEnd = 19 * 60; // 7:00 PM
+    const dayLength = 12 * 60; // For celestial movement
 
-            const isDay = totalMinutes >= sunrise && totalMinutes < sunset;
-            if (isDay) {
-                gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
-                celestial.textContent = '☀️';
-                starsContainer.style.display = 'none';
-            } else {
-                gradient = 'linear-gradient(to bottom, #191970, #000080)';
-                celestial.textContent = '🌙';
-                starsContainer.style.display = 'block';
-                if (!starsCreated) {
-                    createStars();
-                    starsCreated = true;
-                }
-            }
-            document.getElementById('background-container').style.background = gradient;
+    // Helper function to interpolate between two colors
+    function interpolateColor(color1, color2, factor) {
+        const result = color1.slice(1).match(/.{2}/g).map((hex, i) => {
+            const c1 = parseInt(hex, 16);
+            const c2 = parseInt(color2.slice(1).match(/.{2}/g)[i], 16);
+            const value = Math.round(c1 + (c2 - c1) * factor);
+            return value.toString(16).padStart(2, '0');
+        });
+        return `#${result.join('')}`;
+    }
 
-            let progress;
-            if (isDay) {
-                progress = (totalMinutes - sunrise) / dayLength;
-            } else {
-                const adjustedMinutes = totalMinutes < sunrise ? totalMinutes + 1440 : totalMinutes;
-                progress = (adjustedMinutes - moonrise) / dayLength;
-            }
-            progress = Math.max(0, Math.min(1, progress));
-
-            const xPos = 5 + progress * 90;
-            const yPos = 90 - 80 * 4 * progress * (1 - progress);
-
-            celestial.style.left = `${xPos}vw`;
-            celestial.style.top = `${yPos}vh`;
-            celestial.style.display = 'block';
+    // Determine time period and set gradient
+    if (totalMinutes >= sunriseStart && totalMinutes < sunriseEnd) {
+        // Sunrise: Warm orange, pink, yellow
+        const factor = (totalMinutes - sunriseStart) / (sunriseEnd - sunriseStart);
+        const topColor = interpolateColor('#ff4500', '#ffd700', factor); // Orange to yellow
+        const bottomColor = interpolateColor('#ff69b4', '#87ceeb', factor); // Pink to light blue
+        gradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+        celestial.textContent = '☀️';
+        starsContainer.style.display = 'none';
+    } else if (totalMinutes >= sunriseEnd && totalMinutes < dayEnd) {
+        // Daytime: Bright blue tones
+        const factor = (totalMinutes - sunriseEnd) / (dayEnd - sunriseEnd);
+        const topColor = interpolateColor('#87ceeb', '#4682b4', factor); // Light to medium blue
+        const bottomColor = interpolateColor('#b0e0e6', '#1e90ff', factor); // Cyan to deep blue
+        gradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+        celestial.textContent = '☀️';
+        starsContainer.style.display = 'none';
+    } else if (totalMinutes >= dayEnd && totalMinutes < sunsetEnd) {
+        // Sunset: Reddish, golden, purple
+        const factor = (totalMinutes - dayEnd) / (sunsetEnd - dayEnd);
+        const topColor = interpolateColor('#ffd700', '#ff4500', factor); // Yellow to orange-red
+        const bottomColor = interpolateColor('#ff8c00', '#4b0082', factor); // Orange to indigo
+        gradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+        celestial.textContent = '☀️';
+        starsContainer.style.display = 'none';
+    } else {
+        // Night: Deep blue and indigo
+        const factor = ((totalMinutes < sunriseStart ? totalMinutes + 1440 : totalMinutes) - sunsetEnd) / (sunriseStart + 1440 - sunsetEnd);
+        const topColor = interpolateColor('#191970', '#000033', factor); // Midnight blue to darker blue
+        const bottomColor = interpolateColor('#000080', '#1c2526', factor); // Navy to dark teal
+        gradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+        celestial.textContent = '🌙';
+        starsContainer.style.display = 'block';
+        if (!starsCreated) {
+            createStars();
+            starsCreated = true;
         }
+    }
+
+    // Apply gradient with smooth transition
+    const backgroundContainer = document.getElementById('background-container');
+    backgroundContainer.style.transition = 'background 5s ease';
+    backgroundContainer.style.background = gradient;
+
+    // Update celestial body position
+    let progress;
+    if (totalMinutes >= sunriseStart && totalMinutes < sunsetEnd) {
+        progress = (totalMinutes - sunriseStart) / (sunsetEnd - sunriseStart);
+    } else {
+        const adjustedMinutes = totalMinutes < sunriseStart ? totalMinutes + 1440 : totalMinutes;
+        progress = (adjustedMinutes - sunsetEnd) / (sunriseStart + 1440 - sunsetEnd);
+    }
+    progress = Math.max(0, Math.min(1, progress));
+
+    const xPos = 5 + progress * 90;
+    const yPos = 90 - 80 * 4 * progress * (1 - progress);
+
+    celestial.style.left = `${xPos}vw`;
+    celestial.style.top = `${yPos}vh`;
+    celestial.style.display = 'block';
+}
 
         function updateCountdown() {
             const now = new Date();
@@ -592,10 +604,10 @@
             const toggleButton = document.getElementById('toggleRoute');
             
             if (isGrosvenorToHQ) {
-                routeTitle.textContent = "Park Zabeel 1 to HQ in";
+                routeTitle.textContent = "Park Zabeel 2 to HQ in";
                 toggleButton.textContent = "🔄";
             } else {
-                routeTitle.textContent = "HQ to Park Zabeel 1 in";
+                routeTitle.textContent = "HQ to Park Zabeel 2 in";
                 toggleButton.textContent = "🔄";
             }
             updateCountdown();
@@ -664,27 +676,12 @@
         document.getElementById('eGateButton').addEventListener('click', function() {
             document.getElementById('eGateButton').style.display = 'none';
             document.querySelector('.input-container').style.display = 'flex';
-            const input = document.getElementById('busTimeInput');
-            input.value = ''; // Clear input
-            const closestTimesDiv = document.getElementById('closestTimes');
-            closestTimesDiv.textContent = ''; // Clear previous results
-            closestTimesDiv.style.display = 'none';
-            
-            // Set eGate times (HQ arrival times)
-            const eGateTimes = [
-                "00:37", "01:09", "01:26", "01:51", "02:21", "02:51", "03:21", "03:51", "04:21", "04:51",
-                "05:16", "05:41", "06:06", "06:31", "06:56", "07:21", "07:46", "08:11", "08:38", "09:03",
-                "09:28", "09:53", "10:23", "10:53", "11:23", "11:48", "12:13", "12:38", "13:03", "13:28",
-                "13:53", "14:18", "14:43", "15:08", "15:33", "16:05", "16:30", "16:55", "17:22", "17:50",
-                "18:20", "18:59", "19:29", "19:56", "20:21", "20:44", "21:09", "21:39", "22:04", "22:29",
-                "22:52", "23:08", "23:33", "23:57", "00:22"
-            ];
-            // You can use eGateTimes here if needed in your eGate functionality
         });
 
-        // Popup logic with black background
         function showFirstVisitPopup() {
-            if (!localStorage.getItem('hasVisited')) {
+            const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if (!localStorage.getItem('hasVisited') && !isPWA && isIOS) {
                 const popup = document.getElementById('firstVisitPopup');
                 popup.style.display = 'block';
                 document.body.classList.add('black-background');
@@ -699,14 +696,40 @@
         });
 
         window.onload = function() {
-            generateRandomDune();
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
             updateCountdown();
             showFirstVisitPopup();
+            const now = new Date();
+            if (now.getHours() < 6 || now.getHours() >= 18) {
+                createStars();
+            }
         };
 
-        setInterval(updateCountdown, 100);
+        let intervalId = null;
+        function startUpdateLoop() {
+            if (intervalId) clearInterval(intervalId);
+            intervalId = setInterval(updateCountdown, 100);
+        }
+
+        startUpdateLoop();
     </script>
+    <svg class="dune" viewBox="0 0 1000 250" preserveAspectRatio="none">
+    <defs>
+        <linearGradient id="duneGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#f4e4bc;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#edc9af;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#d2a679;stop-opacity:0.8" />
+        </linearGradient>
+    </defs>
+    <path class="dune-gradient" d="
+        M0,250
+        C120,225 320,130 430,80
+        C540,50 680,110 860,190
+        C930,220 1000,235 1000,250
+        L1000,250
+        L0,250
+        Z" />
+</svg>
 </body>
 </html>
